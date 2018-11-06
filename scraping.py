@@ -5,7 +5,7 @@ from time import sleep
 
 URL = "http://anzeninfo.mhlw.go.jp/anzen_pg/SAI_FND.aspx"
 URL1 = "http://anzeninfo.mhlw.go.jp"
-
+print("aaaaaaaaaaaa")
 class Scrap:
     def sc1(self, url):
         r = requests.get(url)
