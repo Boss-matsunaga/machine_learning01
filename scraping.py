@@ -26,25 +26,47 @@ class Scrap:
     			yield hre.get('href')
 
     	if flag == 3:
-    		soup = soup.find("table", class_="tbl_1_1_1")
-    		soup = soup.find_all("td")
     		num_data = []
-    		for num_html in soup:
+    		soup_href = soup.find("table", class_="tbl_1_1_1")
+    		soup_href = soup_href.find_all("td")
+    		for num_html in soup_href:
     			if num_html != None:
     				num_tmp = num_html.text.split("\t")[18]
+    				# print(num_tmp)
     				num_data.append(num_tmp[-4])
-    		print(num_data)
+    		# print(num_data)
     		yield num_data
-    	
+
+    def get_text(self, soup):
+    	text_data = ""
+    	soup_text = soup.find("table", class_="tbl_1")
+    	soup_text = soup_text.find_all("table", border="0")
+    	th_text = soup_text[0].find("th")
+    	th_text = th_text.find("h1")
+    	th_text = th_text.text.splitlines()
+    	text_data += th_text[1].replace("\t","").replace(" ","")
+    	for table_text_num in range(len(soup_text)):
+    		if table_text_num == 0: continue
+    		td_text = soup_text[table_text_num].find_all("td")
+    		# print("-----------------------------------------------------")
+    		for text in td_text:
+    			# print(text.text)
+    			text_data += text.text
+    		yield text_data.replace("\u3000","").replace("\u2460","").replace("\u2461","").replace("\u2462","").replace("\ufffd","")
     		
 sc = Scrap()
 
 for cases_path in sc.select_href(sc.get_html(URL),1):
-	print(cases_path)
+	# print(cases_path)
 	for case_path in sc.select_href(sc.get_html(base_URL+cases_path),2):
-		print(case_path)
+		result = []
+		# print(case_path)
 		sleep(1)
-		with open('result.csv','a',newline="") as file:
+		three_soup = sc.get_html(base_URL+case_path)
+		result = list(sc.select_href(three_soup,3))[0]
+		result.insert(0,list(sc.get_text(three_soup))[0])
+		with open('result.csv','a',newline="",encoding='shift_jis') as file:
 			writer = csv.writer(file)
-			writer.writerow(sc.select_href(sc.get_html(base_URL+case_path),3))
+			writer.writerow(result)
+			# print(result)
 			print("入れた")
