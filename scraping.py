@@ -33,7 +33,7 @@ class Scrap:
     			if num_html != None:
     				num_tmp = num_html.text.split("\t")[18]
     				# print(num_tmp)
-    				num_data.append(num_tmp[-4])
+    				num_data.append(num_tmp[-4].replace("：","0"))
     		# print(num_data)
     		yield num_data
 
